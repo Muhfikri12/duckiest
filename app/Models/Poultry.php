@@ -13,6 +13,7 @@ class Poultry extends Model
     protected $table = 'poultries';
     protected $fillable = [
         'generation',
+        'qty',
         'vaccine',
         'date_of_birth',
         'status',
@@ -21,4 +22,6 @@ class Poultry extends Model
     ];
 
     use SoftDeletes;
+
+     
 }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('poultries', function (Blueprint $table) {
             $table->id();
             $table->string('generation');
+            $table->integer('qty');
             $table->enum('vaccine', ['Vaksin 1', 'Vaksin 2', 'Vaksin 3', 'Belum Vaksin'])->default('Belum Vaksin');
             $table->date('date_of_birth');
             $table->enum('status', ['Terjual', 'Tersedia'])->default('Tersedia');

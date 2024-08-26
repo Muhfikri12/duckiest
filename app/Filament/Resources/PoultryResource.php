@@ -29,6 +29,10 @@ class PoultryResource extends Resource
                     ->label('Generasi')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('qty')
+                    ->label('Jumlah')
+                    ->required()
+                    ->numeric(),
                 Forms\Components\Select::make('vaccine')
                     ->label('Vaksin')
                     ->options([
@@ -68,11 +72,14 @@ class PoultryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('generation')
-                    ->label('Generasi')
+                Tables\Columns\ImageColumn::make('icon')
+                    ->label('Icon')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('category')
+                    ->description(fn (Poultry $record): string => $record->generation)
                     ->label('Kategori'),
+                Tables\Columns\TextColumn::make('qty')
+                    ->label('Jumlah'),
                 Tables\Columns\TextColumn::make('date_of_birth')
                     ->label('Tanggal Lahir')
                     ->dateTooltip()

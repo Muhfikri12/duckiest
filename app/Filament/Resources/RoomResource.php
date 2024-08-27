@@ -21,12 +21,15 @@ class RoomResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $disabled = fn ($livewire) => $livewire->record && $livewire->record->poultry->status === 'Terjual';
+
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Ruangan')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->disabled($disabled),
                 Forms\Components\Select::make('type')
                     ->label('Jenis')
                     ->options([
@@ -38,23 +41,32 @@ class RoomResource extends Resource
                         'Burung' => 'Burung'
                     ])
                     ->required()
-                    ->reactive(),
+                    ->reactive()
+                    ->disabled($disabled),
                 Forms\Components\TextInput::make('qty_duck')
                     ->label('Jumlah Unggas')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->disabled($disabled),
+                Forms\Components\TextInput::make('egg_qty')
+                    ->label('Total Telur')
+                    ->numeric()
+                    ->disabled(function ($get, $livewire) use ($disabled) {
+                        return $disabled($livewire) || $get('type') === 'Itik' || $livewire instanceof \Filament\Resources\Pages\CreateRecord;
+                    }),
                 Forms\Components\TextInput::make('died_qty')
                     ->label('Jumlah Kematian')
-                    ->numeric(),
+                    ->numeric()
+                    ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\CreateRecord)
+                    ->disabled($disabled),
                 Forms\Components\Select::make('poultry_id')
                     ->label('Angkatan')
                     ->relationship('poultry', 'generation', function ($query, $get) {
                         $query->where('status', '!=', 'Terjual')
                             ->where('category', $get('type'));
-
                     })
-                    ->required()
-                    ->disabled(fn ($get) => !$get('type')),
+                    ->disabled($disabled)
+                    ->required(),
             ]);
     }
 
@@ -81,6 +93,10 @@ class RoomResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('qty_duck')
                     ->label('Jumlah Unggas')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('egg_qty')
+                    ->label('Total Telur')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('died_qty')

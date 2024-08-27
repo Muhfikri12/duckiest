@@ -18,7 +18,7 @@ class Treatment extends Model
         'room_id',
         'feed_qty',
         'description',
-        'egg_qty'
+        
     ];
 
     public function room(): BelongsTo {

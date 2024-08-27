@@ -6,6 +6,7 @@ use App\Filament\Resources\PoultryResource\Pages;
 use App\Filament\Resources\PoultryResource\RelationManagers;
 use App\Models\Poultry;
 use App\Models\Room;
+use App\Models\Treatment;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
@@ -91,10 +92,19 @@ class PoultryResource extends Resource
                             ->sum('died_qty');
                     })
                     ->sortable(),
+                Tables\Columns\TextColumn::make('room.treatment.egg_qty')
+                    ->label('Total Telur')
+                    ->getStateUsing(function ($record) {
+                        return Room::where('poultry_id', $record->id)
+                            ->sum('egg_qty');
+                    })
+                    ->sortable(),
+                
                 Tables\Columns\TextColumn::make('date_of_birth')
                     ->label('Tanggal Lahir')
                     ->dateTooltip()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('vaccine')
                     ->label('Vaksin')
                     ->badge()

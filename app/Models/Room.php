@@ -18,7 +18,8 @@ class Room extends Model
         'qty_duck',
         'died_qty',
         'poultry_id',
-        'type'
+        'type',
+        'egg_qty'
     ];
 
     use SoftDeletes;

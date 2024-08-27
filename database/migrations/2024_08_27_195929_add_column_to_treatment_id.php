@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('treatments', function (Blueprint $table) {
-            //
+        Schema::table('rooms', function (Blueprint $table) {
+            
+            $table->integer('egg_qty')->nullable()->after('qty_duck');
         });
     }
 
@@ -23,7 +24,6 @@ return new class extends Migration
     {
         Schema::table('treatments', function (Blueprint $table) {
             
-            $table->integer('egg_qty')->nullable()->after('room_id');
         });
     }
 };

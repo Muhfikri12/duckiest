@@ -165,28 +165,14 @@ class PoultryResource extends Resource
                         'Entog' => 'Entog',
                         'Burung' => 'Burung'
                         
-                    ])
-                    ->default('') 
-                    ->query(function (Builder $query, array $data): Builder {
-                        if (empty($data['value'])) {
-                            return $query; 
-                        }
-                        return $query->where('category', $data['value']);
-                    }),
+                    ]),
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options([
                         'Tersedia' => 'Tersedia',
                         'Terjual' => 'Terjual',
                         
-                    ])
-                    ->default('') 
-                    ->query(function (Builder $query, array $data): Builder {
-                        if (empty($data['value'])) {
-                            return $query; 
-                        }
-                        return $query->where('status', $data['value']);
-                    }),
+                    ]),
                 // Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([

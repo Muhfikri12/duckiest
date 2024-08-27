@@ -24,12 +24,4 @@ class Poultry extends Model
 
     use SoftDeletes;
 
-    public function room(): HasMany {
-        return $this->hasMany(Room::class);
-    }
-
-    public function scopeQuantity($query) {
-
-        // return $query->whereHas
-    }
 }

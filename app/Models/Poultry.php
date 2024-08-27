@@ -28,4 +28,8 @@ class Poultry extends Model
         return $this->hasMany(Room::class);
     }
 
+    public function scopeQuantity($query) {
+
+        // return $query->whereHas
+    }
 }

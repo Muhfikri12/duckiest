@@ -11,7 +11,7 @@ use Illuminate\Support\Carbon;
 
 class WidgetPoultryChart extends ChartWidget
 {
-    protected static ?string $heading = 'Grafik Tahunan Unggas';
+    protected static ?string $heading = 'Grafik Bulanan Unggas';
 
     protected function getData(): array
 {

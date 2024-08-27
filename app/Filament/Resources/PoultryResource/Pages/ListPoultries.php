@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PoultryResource\Pages;
 use App\Filament\Resources\PoultryResource;
 use App\Filament\Resources\PoultryResource\Widgets\PoultryChart;
 use App\Filament\Resources\PoultryResource\Widgets\WidgetPoultryChart;
+use App\Filament\Resources\PoultryResource\Widgets\widgetYearlyPoultryChart;
 use Filament\Actions;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
@@ -26,7 +27,8 @@ class ListPoultries extends ListRecords
     {
         return [
             PoultryChart::class,
-            WidgetPoultryChart::class
+            WidgetPoultryChart::class,
+            widgetYearlyPoultryChart::class,
         ];
     }
 }

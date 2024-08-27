@@ -157,21 +157,35 @@ class PoultryResource extends Resource
                         }),
                 Tables\Filters\SelectFilter::make('category')
                     ->label('Kategori')
-                    ->options([ // Default neutral option
+                    ->options([ 
                         'Bebek' => 'Bebek',
                         'Itik' => 'Itik',
                         'Ayam' => 'Ayam',
                         'Angsa' => 'Angsa',
                         'Entog' => 'Entog',
                         'Burung' => 'Burung'
-                        // Add more categories as needed
+                        
                     ])
-                    ->default('') // Set the default to the neutral option
+                    ->default('') 
                     ->query(function (Builder $query, array $data): Builder {
                         if (empty($data['value'])) {
-                            return $query; // Return all records if no category is selected
+                            return $query; 
                         }
                         return $query->where('category', $data['value']);
+                    }),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        'Tersedia' => 'Tersedia',
+                        'Terjual' => 'Terjual',
+                        
+                    ])
+                    ->default('') 
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (empty($data['value'])) {
+                            return $query; 
+                        }
+                        return $query->where('status', $data['value']);
                     }),
                 // Tables\Filters\TrashedFilter::make(),
             ])

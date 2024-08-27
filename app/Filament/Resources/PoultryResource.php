@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PoultryResource\Pages;
 use App\Filament\Resources\PoultryResource\RelationManagers;
 use App\Models\Poultry;
+use App\Models\Room;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
@@ -13,6 +15,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
 
 class PoultryResource extends Resource
 {
@@ -79,7 +82,15 @@ class PoultryResource extends Resource
                     ->description(fn (Poultry $record): string => $record->generation)
                     ->label('Kategori'),
                 Tables\Columns\TextColumn::make('qty')
-                    ->label('Jumlah'),
+                    ->label('Jumlah')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('room.died_qty')
+                    ->label('Kematian')
+                    ->getStateUsing(function ($record) {
+                        return Room::where('poultry_id', $record->id)
+                            ->sum('died_qty');
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('date_of_birth')
                     ->label('Tanggal Lahir')
                     ->dateTooltip()
@@ -99,7 +110,7 @@ class PoultryResource extends Resource
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'Tersedia' => 'success',
-                        'Terjual' => 'danger',
+                        'Terjual' => 'warning',
                     }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -115,12 +126,58 @@ class PoultryResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\Filter::make('date_of_birth')
+                        ->form([
+                            Forms\Components\DatePicker::make('Tanggal Awal')
+                                ->placeholder(fn ($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
+                            Forms\Components\DatePicker::make('Tanggal Akhir')
+                                ->placeholder(fn ($state): string => now()->format('M d, Y')),
+                        ])
+                        ->query(function (Builder $query, array $data): Builder {
+                            return $query
+                                ->when(
+                                    $data['Tanggal Awal'] ?? null,
+                                    fn (Builder $query, $date): Builder => $query->whereDate('date_of_birth', '>=', $date),
+                                )
+                                ->when(
+                                    $data['Tanggal Akhir'] ?? null,
+                                    fn (Builder $query, $date): Builder => $query->whereDate('date_of_birth', '<=', $date),
+                                );
+                        })
+                        ->indicateUsing(function (array $data): array {
+                            $indicators = [];
+                            if ($data['Tanggal Awal'] ?? null) {
+                                $indicators['Tanggal Awal'] = 'Awal ' . Carbon::parse($data['Tanggal Awal'])->toFormattedDateString();
+                            }
+                            if ($data['Tanggal Akhir'] ?? null) {
+                                $indicators['Tanggal Akhir'] = 'Akhir ' . Carbon::parse($data['Tanggal Akhir'])->toFormattedDateString();
+                            }
+
+                            return $indicators;
+                        }),
+                Tables\Filters\SelectFilter::make('category')
+                    ->label('Kategori')
+                    ->options([ // Default neutral option
+                        'Bebek' => 'Bebek',
+                        'Itik' => 'Itik',
+                        'Ayam' => 'Ayam',
+                        'Angsa' => 'Angsa',
+                        'Entog' => 'Entog',
+                        'Burung' => 'Burung'
+                        // Add more categories as needed
+                    ])
+                    ->default('') // Set the default to the neutral option
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (empty($data['value'])) {
+                            return $query; // Return all records if no category is selected
+                        }
+                        return $query->where('category', $data['value']);
+                    }),
+                // Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

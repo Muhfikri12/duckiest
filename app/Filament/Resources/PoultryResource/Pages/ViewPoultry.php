@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PoultryResource\Pages;
 
 use App\Filament\Resources\PoultryResource;
+use App\Filament\Resources\PoultryResource\Widgets\PoultryChart;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -17,4 +18,5 @@ class ViewPoultry extends ViewRecord
             Actions\EditAction::make(),
         ];
     }
+
 }

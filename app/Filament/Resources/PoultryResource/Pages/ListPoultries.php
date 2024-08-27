@@ -3,11 +3,14 @@
 namespace App\Filament\Resources\PoultryResource\Pages;
 
 use App\Filament\Resources\PoultryResource;
+use App\Filament\Resources\PoultryResource\Widgets\PoultryChart;
 use Filament\Actions;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
 
 class ListPoultries extends ListRecords
 {
+    use ExposesTableToWidgets;
     protected static string $resource = PoultryResource::class;
     protected static ?string $title = 'Grafik Tabel Unggas';
 
@@ -15,6 +18,13 @@ class ListPoultries extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            PoultryChart::class
         ];
     }
 }

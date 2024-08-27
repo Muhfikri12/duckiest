@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\RoomResource\Pages;
-use App\Filament\Resources\RoomResource\RelationManagers;
-use App\Models\Room;
+use App\Filament\Resources\FeedResource\Pages;
+use App\Filament\Resources\FeedResource\RelationManagers;
+use App\Models\Feed;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class RoomResource extends Resource
+class FeedResource extends Resource
 {
-    protected static ?string $model = Room::class;
+    protected static ?string $model = Feed::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -24,11 +24,11 @@ class RoomResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nama Ruangan')
+                    ->label('Nama')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('type')
-                    ->label('Jenis')
+                Forms\Components\Select::make('category')
+                    ->label('Kategori')
                     ->options([
                         'Bebek' => 'Bebek',
                         'Itik' => 'Itik',
@@ -37,24 +37,51 @@ class RoomResource extends Resource
                         'Entog' => 'Entog',
                         'Burung' => 'Burung'
                     ])
-                    ->required()
-                    ->reactive(),
-                Forms\Components\TextInput::make('qty_duck')
-                    ->label('Jumlah Unggas')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('died_qty')
-                    ->label('Jumlah Kematian')
-                    ->numeric(),
-                Forms\Components\Select::make('poultry_id')
-                    ->label('Angkatan')
-                    ->relationship('poultry', 'generation', function ($query, $get) {
-                        $query->where('status', '!=', 'Terjual')
-                            ->where('category', $get('type'));
-
+                    ->required(),
+                Forms\Components\Select::make('type')
+                    ->label('Tipe')
+                    ->options([
+                        'Basah' => 'Basah',
+                        'Kering' => 'Kering',
+                    ])
+                    ->reactive()
+                    ->required(),
+                Forms\Components\Select::make('method')
+                    ->label('Metode')
+                    ->options(function (callable $get) {
+                        $type = $get('type');
+                        if ($type === 'Basah') {
+                            return [
+                                'Kukus' => 'Kukus',
+                                'Original' => 'Original',
+                            ];
+                        } elseif ($type === 'Kering') {
+                            return [
+                                'Original' => 'Original',
+                            ];
+                        }
                     })
+                    ->required(),
+                Forms\Components\RichEditor::make('composition')
+                    ->label('Komposisi')
+                    ->toolbarButtons([
+                        'attachFiles',
+                        'blockquote',
+                        'bold',
+                        'bulletList',
+                        'codeBlock',
+                        'h2',
+                        'h3',
+                        'italic',
+                        'link',
+                        'orderedList',
+                        'redo',
+                        'strike',
+                        'underline',
+                        'undo',
+                    ])
                     ->required()
-                    ->disabled(fn ($get) => !$get('type')),
+                    ->columnSpan('full'),
             ]);
     }
 
@@ -62,31 +89,14 @@ class RoomResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('poultry.icon')
-                    ->label('Icon'),
-                Tables\Columns\TextColumn::make('poultry.category')
-                    ->description(fn (Room $record): string => $record->poultry->generation)
-                    ->label('Generasi')
-                    ->searchable(query: function ($query, $search) {
-                        // Search in the related poultry's category name
-                        $query->orWhereHas('poultry', function ($query) use ($search) {
-                            $query->where('category', 'like', "%{$search}%")
-                                  ->orWhere('generation', 'like', "%{$search}%");
-                        });
-                    }),
                 Tables\Columns\TextColumn::make('name')
-                    ->badge()
-                    ->color('info')
-                    ->label('Kandang')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('qty_duck')
-                    ->label('Jumlah Unggas')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('died_qty')
-                    ->label('Total Kematian')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('category')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('method')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -126,10 +136,10 @@ class RoomResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRooms::route('/'),
-            'create' => Pages\CreateRoom::route('/create'),
-            'view' => Pages\ViewRoom::route('/{record}'),
-            'edit' => Pages\EditRoom::route('/{record}/edit'),
+            'index' => Pages\ListFeeds::route('/'),
+            'create' => Pages\CreateFeed::route('/create'),
+            'view' => Pages\ViewFeed::route('/{record}'),
+            'edit' => Pages\EditFeed::route('/{record}/edit'),
         ];
     }
 

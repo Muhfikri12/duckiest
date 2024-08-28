@@ -183,7 +183,7 @@ class PoultryResource extends Resource
                         'Terjual' => 'Terjual',
                         
                     ]),
-                // Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

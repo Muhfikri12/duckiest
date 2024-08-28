@@ -11,42 +11,73 @@ use Illuminate\Support\Carbon;
 
 class widgetYearlyPoultryChart extends ChartWidget
 {
-    protected static ?string $heading = 'Grafik Tahunan Unggas';
+    protected static ?string $heading = 'Grafik Kematian Unggas';
 
     protected function getData(): array
     {
-        $dataQty = Trend::model(Poultry::class)
+        $databebekQty = Trend::query(Room::query()
+                        ->where('type', 'Bebek'))
             ->between(
-                start: now()->startOfYear()->subYears(6),
-                end: now()->endOfYear(),
+                start: now()->subMonth(6),
+                end: now(),
             )
-            ->perYear()
-            ->sum('qty');
+            ->perMonth()
+            ->sum('died_qty');
 
-        $dataDiedQty = Trend::model(Room::class)
+        $dataItikQty = Trend::query(Room::query()
+                        ->where('type', 'Itik'))
             ->between(
-                start: now()->startOfYear()->subYears(6),
-                end: now()->endOfYear(),
+                start: now()->subMonth(6),
+                end: now(),
             )
-            ->perYear()
+            ->perMonth()
+            ->sum('died_qty');
+            
+        $dataAyamQty = Trend::query(Room::query()
+                        ->where('type', 'Ayam'))
+            ->between(
+                start: now()->subMonth(6),
+                end: now(),
+            )
+            ->perMonth()
+            ->sum('died_qty');
+        $dataBurungQty = Trend::query(Room::query()
+                        ->where('type', 'Burung'))
+            ->between(
+                start: now()->subMonth(6),
+                end: now(),
+            )
+            ->perMonth()
             ->sum('died_qty');
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Grafik Total Unggas',
-                    'data' => $dataQty->map(fn (TrendValue $value) => $value->aggregate),
+                    'label' => 'Bebek',
+                    'data' => $databebekQty->map(fn (TrendValue $value) => $value->aggregate),
                     'borderColor' => '#36A2EB', 
                     'backgroundColor' => 'rgba(54, 162, 235, 0.2)', 
                 ],
                 [
-                    'label' => 'Grafik Unggas Mati',
-                    'data' => $dataDiedQty->map(fn (TrendValue $value) => $value->aggregate),
+                    'label' => 'Itik',
+                    'data' => $dataItikQty->map(fn (TrendValue $value) => $value->aggregate),
                     'borderColor' => '#FF6384', 
                     'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
                 ],
+                [
+                    'label' => 'Ayam',
+                    'data' => $dataAyamQty->map(fn (TrendValue $value) => $value->aggregate),
+                    'borderColor' => '#9966FF', 
+                    'backgroundColor' => 'rgba(153, 102, 255, 0.2)',
+                ],
+                [
+                    'label' => 'Burung',
+                    'data' => $dataBurungQty->map(fn (TrendValue $value) => $value->aggregate),
+                    'borderColor' => '#FFCD56', 
+                    'backgroundColor' => 'rgba(255, 205, 86, 0.2)',
+                ],
             ],
-            'labels' => $dataQty->map(fn (TrendValue $value) => $value->date),
+            'labels' => $dataItikQty->map(fn (TrendValue $value) => Carbon::parse($value->date)->format('F')),
         ];
     }
 

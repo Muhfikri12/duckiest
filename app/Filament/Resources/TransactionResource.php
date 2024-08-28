@@ -34,6 +34,7 @@ class TransactionResource extends Resource
                         $status = Category::find($state)?->type;
                         $set('is_poultry_disabled', $status === 'Pengeluaran');
                         $set('is_poultry_required', $status === 'Pemasukan');
+                        $set('is_max_qty_active', $status === 'Pemasukan');
                     }),
 
                 Forms\Components\Select::make('poultry_id')
@@ -65,15 +66,15 @@ class TransactionResource extends Resource
                     ->required()
                     ->numeric()
                     ->reactive()
-                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
                         $set('total', $get('price') * $state);
                     })
-                    ->maxValue(fn (callable $get) => $get('max_qty'))
+                    ->maxValue(fn (callable $get) => $get('is_max_qty_active') ? $get('max_qty') : null)
                     ->rule(function (callable $get) {
-                        $maxQty = $get('max_qty');
-                        return "max:$maxQty";
+                        $maxQty = $get('is_max_qty_active') ? $get('max_qty') : null;
+                        return $maxQty ? "max:$maxQty" : null;
                     })
-                    ->hint(fn (callable $get) => "Max available quantity: " . $get('max_qty')),
+                    ->hint(fn (callable $get) => $get('is_max_qty_active') ? "Max available quantity: " . $get('max_qty') : ""),                
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()

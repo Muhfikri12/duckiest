@@ -3,16 +3,20 @@
 namespace App\Observers;
 
 use App\Models\Transaction;
+use App\Models\User;
+use Filament\Notifications\Notification;
 
 class TransactionObserve
 {
     /**
      * Handle the Transaction "created" event.
      */
-    public function created(Transaction $transaction): void
-    {
-        //
-    }
+    // public function toDatabase(Transaction $notifiable): array
+    //     {
+    //         return Notification::make()
+    //             ->title('Saved successfully')
+    //             ->getDatabaseMessage();
+    //     }
 
     /**
      * Handle the Transaction "updated" event.

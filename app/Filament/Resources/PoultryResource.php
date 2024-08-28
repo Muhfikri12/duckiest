@@ -6,6 +6,7 @@ use App\Filament\Resources\PoultryResource\Pages;
 use App\Filament\Resources\PoultryResource\RelationManagers;
 use App\Models\Poultry;
 use App\Models\Room;
+use App\Models\Transaction;
 use App\Models\Treatment;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -83,13 +84,18 @@ class PoultryResource extends Resource
                     ->description(fn (Poultry $record): string => $record->generation)
                     ->label('Kategori'),
                 Tables\Columns\TextColumn::make('qty')
+                    ->description(function ($record) {
+                        $diedQty = Room::where('poultry_id', $record->id)
+                            ->sum('died_qty');
+                        return 'Kematian: ' . $diedQty;
+                    })
                     ->label('Jumlah')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('room.died_qty')
-                    ->label('Kematian')
+                Tables\Columns\TextColumn::make('transaction.qty')
+                    ->label('Terjual')
                     ->getStateUsing(function ($record) {
-                        return Room::where('poultry_id', $record->id)
-                            ->sum('died_qty');
+                        return Transaction::where('poultry_id', $record->id)
+                            ->sum('qty');
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('room.treatment.egg_qty')

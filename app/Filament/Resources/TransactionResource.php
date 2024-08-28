@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
+use App\Models\Category;
 use App\Models\Transaction;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Relationship;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TransactionResource extends Resource
@@ -23,30 +25,73 @@ class TransactionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('category_id')
+                Forms\Components\Select::make('category_id')
+                    ->label('Kategori')
+                    ->relationship('category', 'name')
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('poultry_id')
-                    ->required()
-                    ->numeric(),
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        $status = Category::find($state)?->type;
+                        $set('is_poultry_disabled', $status === 'Pengeluaran');
+                        $set('is_poultry_required', $status === 'Pemasukan');
+                    }),
+
+                Forms\Components\Select::make('poultry_id')
+                    ->label('Unggas')
+                    ->relationship('poultry', 'generation', function ($query) {
+                        $query->where('status', '!=', 'Terjual');
+                    })
+                    ->required(fn (callable $get) => $get('is_poultry_required'))
+                    ->disabled(fn (callable $get) => $get('is_poultry_disabled'))
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                       
+                        $poultry = \App\Models\Poultry::find($state);
+                        $initialQty = $poultry?->qty ?? 0;
+
+                        $previousTransactionQty = \App\Models\Transaction::where('poultry_id', $state)
+                            ->sum('qty'); 
+                
+                        $maxQty = $initialQty - $previousTransactionQty;
+         
+                        $set('max_qty', $maxQty);
+                    }),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\FileUpload::make('image')
-                    ->image()
-                    ->required(),
                 Forms\Components\DatePicker::make('date_transaction')
                     ->required(),
                 Forms\Components\TextInput::make('qty')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                        $set('total', $get('price') * $state);
+                    })
+                    ->maxValue(fn (callable $get) => $get('max_qty'))
+                    ->rule(function (callable $get) {
+                        $maxQty = $get('max_qty');
+                        return "max:$maxQty";
+                    })
+                    ->hint(fn (callable $get) => "Max available quantity: " . $get('max_qty')),
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('Rp')
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                        $set('total', $state * $get('qty'));
+                    }),
+                
                 Forms\Components\TextInput::make('total')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->disabled() 
+                    ->dehydrated(true)
+                    ->reactive(),
+                     
+                Forms\Components\FileUpload::make('image')
+                    ->image(),
             ]);
     }
 

@@ -29,7 +29,11 @@ class CategoryResource extends Resource
                 Forms\Components\FileUpload::make('image')
                     ->image()
                     ->required(),
-                Forms\Components\TextInput::make('type')
+                Forms\Components\Select::make('type')
+                    ->options([
+                        'Pengeluaran' => 'Pengeluaran',
+                        'Pemasukan' => 'Pemasukan'
+                    ])
                     ->required(),
             ]);
     }

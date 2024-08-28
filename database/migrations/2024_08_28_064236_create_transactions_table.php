@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained('categories');
-            $table->foreignId('poultry_id')->constrained('poultries')->cascadeOnDelete();
+            $table->foreignId('poultry_id')->nullable()->constrained('poultries')->cascadeOnDelete();
             $table->string('name');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->date('date_transaction');
             $table->integer('qty');
             $table->integer('price');

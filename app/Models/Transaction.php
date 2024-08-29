@@ -34,22 +34,4 @@ class Transaction extends Model
 
         return $this->belongsTo(Category::class);
     }
-
-    protected static function booted()
-    {
-        static::saved(function ($transaction) {
-            $poultryId = $transaction->poultry_id;
-            $poultry = \App\Models\Poultry::find($poultryId);
-
-            if ($poultry) {
-                $totalTransactionQty = \App\Models\Transaction::where('poultry_id', $poultryId)
-                    ->sum('qty');
-
-                if ($totalTransactionQty >= $poultry->qty) {
-                    $poultry->update(['status' => 'Terjual']);
-                }
-            }
-        });
-    }
-
 }

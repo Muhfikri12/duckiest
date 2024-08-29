@@ -226,6 +226,8 @@ class PoultryResource extends Resource
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
-            ]);
+            ])
+            ->orderByRaw("CASE WHEN status = 'Terjual' THEN 1 ELSE 0 END ASC")
+            ->orderBy('created_at', 'desc'); // Optional: Secondary ordering by created_at
     }
 }

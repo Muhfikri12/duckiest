@@ -5,8 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
 use App\Models\Category;
+use App\Models\Poultry;
 use App\Models\Transaction;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -14,6 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Relationship;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use NumberFormatter;
 
 class TransactionResource extends Resource
 {
@@ -100,26 +103,36 @@ class TransactionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('category_id')
+                Tables\Columns\ImageColumn::make('category.image')
+                    ->label('Icon'),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label('Transaksi')
+                    ->description(fn (Transaction $record): string => $record->poultry->generation ?? $record->name)
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('poultry_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('category.type')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Pengeluaran' => 'warning',
+                        'Pemasukan' => 'success',
+                    })
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('date_transaction')
-                    ->date()
-                    ->sortable(),
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Struck'),
                 Tables\Columns\TextColumn::make('qty')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->label('Harga')
+                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total')
                     ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('date_transaction')
+                    ->label('Tanggal')
+                    ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

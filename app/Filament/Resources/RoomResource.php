@@ -91,7 +91,7 @@ class RoomResource extends Resource
                     ->color('info')
                     ->label('Kandang')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('qty_duck')
+                Tables\Columns\TextColumn::make('qty_duck' )
                     ->label('Jumlah Unggas')
                     ->numeric()
                     ->sortable(),

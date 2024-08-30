@@ -118,8 +118,6 @@ class TransactionResource extends Resource
                         'Pemasukan' => 'success',
                     })
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('image')
-                    ->label('Struck'),
                 Tables\Columns\TextColumn::make('qty')
                     ->numeric()
                     ->sortable(),
@@ -130,6 +128,8 @@ class TransactionResource extends Resource
                 Tables\Columns\TextColumn::make('total')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Struck'),
                 Tables\Columns\TextColumn::make('date_transaction')
                     ->label('Tanggal')
                     ->date()

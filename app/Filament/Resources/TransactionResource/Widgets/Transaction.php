@@ -20,16 +20,26 @@ class Transaction extends BaseWidget
     {
         return [
             
-            Stat::make('Total Pemasukan','Rp. ' . number_format($this->getPageTableQuery()
+            Stat::make('Total Pemasukan',number_format($this->getPageTableQuery()
                 ->join('categories', 'transactions.category_id', '=', 'categories.id')
                 ->where('categories.type', 'Pemasukan')
                 ->sum('transactions.total'), 0, ',', '.'))
                 ->chart([7, 2, 10, 3, 15, 4, 17]),
-            Stat::make('Total Pengeluaran','Rp. ' . number_format($this->getPageTableQuery()
+            Stat::make('Total Pengeluaran',number_format($this->getPageTableQuery()
                 ->join('categories', 'transactions.category_id', '=', 'categories.id')
                 ->where('categories.type', 'Pengeluaran')
                 ->sum('transactions.total'), 0, ',', '.'))
-                ->chart([7, 2, 10, 3, 15, 4, 17]),
+                ->chart([7, 4, 8, 10, 5, 1, 9]),
+            Stat::make('Pemasukan Tertinggi',number_format($this->getPageTableQuery()
+                ->join('categories', 'transactions.category_id', '=', 'categories.id')
+                ->where('categories.type', 'Pemasukan')
+                ->max('transactions.total'), 0, ',', '.'))
+                ->chart([5, 8, 6, 4, 8, 3, 5]),
+            Stat::make('Pengeluaran Tertinggi',number_format($this->getPageTableQuery()
+                ->join('categories', 'transactions.category_id', '=', 'categories.id')
+                ->where('categories.type', 'Pengeluaran')
+                ->max('transactions.total'), 0, ',', '.'))
+                ->chart([5, 8, 6, 4, 8, 3, 5]),
         ];
     }
 }

@@ -17,7 +17,10 @@ class RoomResource extends Resource
 {
     protected static ?string $model = Room::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
+    protected static ?string $navigationLabel = 'Kandang';
+    protected static ?string $navigationGroup = 'Resource';
+    
 
     public static function form(Form $form): Form
     {

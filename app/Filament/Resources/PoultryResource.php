@@ -23,8 +23,10 @@ class PoultryResource extends Resource
 {
     protected static ?string $model = Poultry::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-bug-ant';
     protected static ?string $navigationLabel = 'Unggas';
+    protected static ?string $navigationGroup = 'Resource';
+
 
     public static function form(Form $form): Form
     {

@@ -29,7 +29,7 @@ class Transaction extends BaseWidget
                 ->join('categories', 'transactions.category_id', '=', 'categories.id')
                 ->where('categories.type', 'Pengeluaran')
                 ->sum('transactions.total'), 0, ',', '.'))
-                ->chart([7, 4, 8, 10, 5, 1, 9]),
+                ->chart([7, 4, 8, 10, 5, 7, 9]),
             Stat::make('Pemasukan Tertinggi',number_format($this->getPageTableQuery()
                 ->join('categories', 'transactions.category_id', '=', 'categories.id')
                 ->where('categories.type', 'Pemasukan')
@@ -39,7 +39,7 @@ class Transaction extends BaseWidget
                 ->join('categories', 'transactions.category_id', '=', 'categories.id')
                 ->where('categories.type', 'Pengeluaran')
                 ->max('transactions.total'), 0, ',', '.'))
-                ->chart([5, 8, 6, 4, 8, 3, 5]),
+                ->chart([1, 5, 7, 4, 7, 3, 5]),
         ];
     }
 }

@@ -18,7 +18,9 @@ class TreatmentResource extends Resource
 {
     protected static ?string $model = Treatment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-plus-circle';
+    protected static ?string $navigationGroup = 'Resource';
+    protected static ?string $navigationLabel = 'Perawatan';
 
     public static function form(Form $form): Form
     {

@@ -17,7 +17,9 @@ class FeedResource extends Resource
 {
     protected static ?string $model = Feed::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box-arrow-down';
+    protected static ?string $navigationLabel = 'Pakan';
+    protected static ?string $navigationGroup = 'Resource';
 
     public static function form(Form $form): Form
     {

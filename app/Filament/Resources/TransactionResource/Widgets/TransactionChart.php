@@ -8,7 +8,6 @@ use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class TransactionChart extends ChartWidget
 {

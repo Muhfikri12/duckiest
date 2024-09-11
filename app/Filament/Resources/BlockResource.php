@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\HatchResource\Pages;
-use App\Filament\Resources\HatchResource\RelationManagers;
-use App\Models\Hatch;
+use App\Filament\Resources\BlockResource\Pages;
+use App\Filament\Resources\BlockResource\RelationManagers;
+use App\Models\Block;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class HatchResource extends Resource
+class BlockResource extends Resource
 {
-    protected static ?string $model = Hatch::class;
+    protected static ?string $model = Block::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -23,37 +23,43 @@ class HatchResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('generation')
+                Forms\Components\TextInput::make('name')
                     ->label('Nama')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('date_of_birth')
-                    ->label('Tanggal Penetasan')
+                Forms\Components\Select::make('hatches_id')
+                    ->label('Nama Generasi')
+                    ->relationship('Hatch', 'generation')
                     ->required(),
-                Forms\Components\Select::make('type_eggs')
-                    ->label('Jenis Telur')
-                    ->options([
-                        'Panen' => 'Panen',
-                        'Tidak Panen' => 'Tidak Panen'
-                    ])
-                    ->required(),
-                ]);
-
+                Forms\Components\TextInput::make('qty')
+                    ->label('Quantity')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('reverse_time')
+                    ->label('Jumlah Balikan')
+                    ->required()
+                    ->numeric(),
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('generation')
+                Tables\Columns\TextColumn::make('name')
                     ->label('Nama')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('date_of_birth')
-                    ->label('Tanggal Penetasan')
-                    ->date()
+                Tables\Columns\TextColumn::make('hatches_id')
+                    ->label('Generasi')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('qty')
+                    ->label('Quantity')
+                    ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('type_eggs')
-                    ->label('Jenis Telur'),
+                Tables\Columns\TextColumn::make('reverse_time')
+                    ->label('Jumlah Balikan')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -81,7 +87,6 @@ class HatchResource extends Resource
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
-
     }
 
     public static function getRelations(): array
@@ -94,10 +99,10 @@ class HatchResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListHatches::route('/'),
-            'create' => Pages\CreateHatch::route('/create'),
-            'view' => Pages\ViewHatch::route('/{record}'),
-            'edit' => Pages\EditHatch::route('/{record}/edit'),
+            'index' => Pages\ListBlocks::route('/'),
+            'create' => Pages\CreateBlock::route('/create'),
+            'view' => Pages\ViewBlock::route('/{record}'),
+            'edit' => Pages\EditBlock::route('/{record}/edit'),
         ];
     }
 

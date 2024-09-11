@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListHatches extends ListRecords
 {
     protected static string $resource = HatchResource::class;
+    protected static ?string $title = 'Penetasan Telur';
 
     protected function getHeaderActions(): array
     {

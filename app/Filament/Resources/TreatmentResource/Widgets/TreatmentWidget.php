@@ -21,7 +21,8 @@ class TreatmentWidget extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Pakan', number_format($this->getPageTableQuery()->sum('feed_qty'), 0, ',', '.') . ' Kg')
+            Stat::make('Total Pakan', number_format($this->getPageTableQuery()->sum('feed_qty'), 0, ',',
+            '.') . ' Kg')
                 ->chart([7, 2, 10, 3, 15, 4, 17]),
             // Stat::make('Total Kematian', number_format(
             //         $this->getTotalDiedQty(), 0, ',', ',') . ' Ekor'
@@ -36,16 +37,14 @@ class TreatmentWidget extends BaseWidget
     {
         // Ambil query dari halaman tabel yang difilter
         $query = $this->getPageTableQuery()
-                ->join('rooms', 'rooms.poultry_id', '=', 'poultries.id');     
+                ->join('rooms', 'rooms.poultry_id', '=', 'poultries.id');
         return $query->sum('rooms.died_qty');
     }
 
     protected function getTotalEggQty(): int
     {
-       
         $query = $this->getPageTableQuery()
                 ->join('rooms', 'rooms.poultry_id', '=', 'poultries.id');
-                
         return $query->sum('rooms.egg_qty');
     }
 }

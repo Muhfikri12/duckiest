@@ -7,20 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Block extends Model
+class HatchTreatment extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'blocks';
+    protected $table = 'hatch_treatments';
     protected $fillable = [
-        'name',
-        'hatches_id',
-        'qty',
-        'reverse_time'
+        'blocks_id',
+        'fase',
+        'temperature',
+        'humadity',
+        'died_qty',
+        'description'
     ];
 
-    public function hatch(): BelongsTo {
+    public function Block(): BelongsTo {
 
-        return $this->belongsTo(Hatch::class, 'hatches_id');
+        return $this->belongsTo(Block::class, 'blocks_id');
     }
 }

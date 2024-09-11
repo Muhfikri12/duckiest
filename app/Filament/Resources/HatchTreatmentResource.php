@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\BlockResource\Pages;
-use App\Filament\Resources\BlockResource\RelationManagers;
-use App\Models\Block;
+use App\Filament\Resources\HatchTreatmentResource\Pages;
+use App\Filament\Resources\HatchTreatmentResource\RelationManagers;
+use App\Models\HatchTreatment;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,34 +13,44 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class BlockResource extends Resource
+class HatchTreatmentResource extends Resource
 {
-    protected static ?string $model = Block::class;
+    protected static ?string $model = HatchTreatment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-home';
+    protected static ?string $navigationIcon = 'heroicon-o-plus-circle';
     protected static ?string $navigationGroup = 'Penetasan';
-    protected static ?string $navigationLabel = 'Kamar';
+    protected static ?string $navigationLabel = 'Perawatan';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Nama')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('hatches_id')
-                    ->label('Nama Generasi')
-                    ->relationship('hatch', 'generation')
+                Forms\Components\Select::make('blocks_id')
+                    ->label('Kamar')
+                    ->relationship('Block', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('qty')
-                    ->label('Quantity')
+                Forms\Components\Select::make('fase')
+                    ->options([
+                        'Minggu 1' => 'Minggu 1',
+                        'Minggu 2' => 'Minggu 2',
+                        'Minggu 3' => 'Minggu 3',
+                        'Minggu 4' => 'Minggu 4'
+                    ])
+                    ->required(),
+                Forms\Components\TextInput::make('temperature')
+                    ->label('Suhu')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('reverse_time')
-                    ->label('Jumlah Balikan')
+                Forms\Components\TextInput::make('humadity')
+                    ->label('Kelembapan')
                     ->required()
                     ->numeric(),
+                Forms\Components\TextInput::make('died_qty')
+                    ->label('Total Kematian')
+                    ->numeric(),
+                Forms\Components\Textarea::make('description')
+                    ->label('Keterangan')
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -48,18 +58,21 @@ class BlockResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Nama')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('hatch.generation')
-                    ->label('Generasi')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('qty')
-                    ->label('Quantity')
+                Tables\Columns\TextColumn::make('blocks_id')
+                    ->label('Kamar')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('reverse_time')
-                    ->label('Jumlah Balikan')
+                Tables\Columns\TextColumn::make('fase'),
+                Tables\Columns\TextColumn::make('temperature')
+                    ->label('Suhu')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('humadity')
+                    ->label('Kelembapan')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('died_qty')
+                    ->label('Total Kematian')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -101,10 +114,10 @@ class BlockResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBlocks::route('/'),
-            'create' => Pages\CreateBlock::route('/create'),
-            'view' => Pages\ViewBlock::route('/{record}'),
-            'edit' => Pages\EditBlock::route('/{record}/edit'),
+            'index' => Pages\ListHatchTreatments::route('/'),
+            'create' => Pages\CreateHatchTreatment::route('/create'),
+            'view' => Pages\ViewHatchTreatment::route('/{record}'),
+            'edit' => Pages\EditHatchTreatment::route('/{record}/edit'),
         ];
     }
 

@@ -17,7 +17,9 @@ class HatchResource extends Resource
 {
     protected static ?string $model = Hatch::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
+    protected static ?string $navigationGroup = 'Penetasan';
+    protected static ?string $navigationLabel = 'Telur';
 
     public static function form(Form $form): Form
     {
